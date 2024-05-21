@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
         // be sure to include its associated Category and Tag data
         include: [{model: Category}, {model: Tag}]
     })
-        .then((productData) => res.json(productData))
+        .then((products) => res.json(products))
         .catch((err) => {
         console.log(err);
         res.status(500).json(err);
@@ -28,12 +28,16 @@ router.get('/:id', (req, res) => {
     },
     include: [{model: Category}, {model: Tag}]
   })
-    .then((productData) => res.json(productData))
+    .then((product) => {
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+          }
+          res.json(product);
+    })
     .catch((err) => {
       console.log(err);
       res.status(500).json(err);
     });
-  
 });
 
 // create new product
@@ -120,17 +124,16 @@ router.delete('/:id', (req, res) => {
         id: req.params.id
         }
     })
-        .then((productData) => {
-        if (!productData) {
-            res.status(404).json({ message: 'No product found with this id' });
-            return;
-        }
-        res.json(productData);
-        })
-        .catch((err) => {
-        console.log(err);
-        res.status(500).json(err);
-        });
+        .then((product) => {
+            if (!product) {
+                return res.status(404).json({ message: 'Product not found' });
+              }
+              res.json(product);
+            })
+            .catch((err) => {
+              console.log(err);
+              res.status(500).json(err);
+            });
 });
 
 module.exports = router;

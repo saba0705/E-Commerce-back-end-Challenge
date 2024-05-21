@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
   // be sure to include its associated Products
    include : [{model: Product}]
   })
-    .then((categoryData) => res.json(categoryData))
+    .then((categories) => res.json(categories))
     .catch((err) => {
       console.log(err);
       res.status(500).json(err);
@@ -27,7 +27,7 @@ router.get('/:id', (req, res) => {
         // be sure to include its associated Products
         include : [{model: Product}]
     })
-        .then((categoryData) => res.json(categoryData))
+        .then((category) => res.json(category))
         .catch((err) => {
         console.log(err);
         res.status(500).json(err);
@@ -37,7 +37,7 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
   // create a new category
     Category.create(req.body)
-        .then((categoryData) => res.json(categoryData))
+        .then((category) => res.json(category))
         .catch((err) => {
         console.log(err);
         res.status(400).json(err);
@@ -52,17 +52,16 @@ router.put('/:id', (req, res) => {
         id: req.params.id
         }
     })
-        .then((categoryData) => {
-        if (!categoryData) {
-            res.status(404).json({ message: 'No category found with this id' });
-            return;
+        .then((category) => {
+            res.json(category);
         }
-        res.json(categoryData);
-        })
-        .catch((err) => {
-        console.log(err);
-        res.status(500).json(err);
-        });
+        )
+        .catch((err) => {   
+            console.log(err);
+            res.status(400).json(err);
+        }
+        );
+      
 });
 
 router.delete('/:id', (req, res) => {
@@ -72,17 +71,13 @@ router.delete('/:id', (req, res) => {
         id: req.params.id
         }
     })
-        .then((categoryData) => {
-        if (!categoryData) {
-            res.status(404).json({ message: 'No category found with this id' });
-            return;
-        }
-        res.json(categoryData);
-        })
-        .catch((err) => {
+    .then(() => {
+        res.status(204).end(); // Respond with a success status code
+      })
+      .catch((err) => {
         console.log(err);
-        res.status(500).json(err);
-        });
+        res.status(400).json(err); // Respond with an error if deletion fails
+      });
 });
 
 module.exports = router;
